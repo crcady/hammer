@@ -104,6 +104,10 @@ if 'GPROF' in env and env['GPROF'] == 1:
     build_shared_library=False
     static_library_name = 'hammer_pg'
 
+if GetOption('llvm'):
+    build_shared_library=False
+    static_library_name = 'hammer_ir'
+
 # Markers for later
 libhammer_static = None
 libhammer_shared = None

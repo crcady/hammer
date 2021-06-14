@@ -93,9 +93,15 @@ AddOption('--in-place',
 
 AddOption('--tests',
           dest='with_tests',
-          default=env['PLATFORM'] != 'win32',
+          default=False, #env['PLATFORM'] != 'win32',
           action='store_true',
           help='Build tests')
+
+AddOption('--llvm',
+          dest='llvm',
+          default=False,
+          action='store_true',
+          help='Emit LLVM bitcode, rather than native executable')
 
 env['CC'] = os.getenv('CC') or env['CC']
 env['CXX'] = os.getenv('CXX') or env['CXX']
@@ -164,6 +170,13 @@ if GetOption('gprof'):
         print("Can only use gprof with gcc")
         Exit(1)
         
+if GetOption('llvm'):
+    if env['CC'] == 'clang':
+        env.Append(CCFLAGS=['-emit-llvm'])
+        env.Append(LINKFLAGS=['-emit-llvm'])
+    else:
+        print("Can only emit llvm with clang")
+        Exit(1)
 
 dbg = env.Clone(VARIANT='debug')
 if env['CC'] == 'cl':
